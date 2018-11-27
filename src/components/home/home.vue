@@ -25,21 +25,21 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <div>
-          <el-menu :router="true" :unique-opened='true' class="el-menu-vertical-demo" >
+          <el-menu :router="true" :unique-opened='true' class="el-menu-vertical-demo">
             <!-- 1 -->
             <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-document"></i>
                 <span>用户管理</span>
               </template>
-              
-                <el-menu-item index="users">
-                  <template slot="title">
-                    <i class="el-icon-tickets"></i>
-                    <span>用户列表</span>
-                  </template>
-                </el-menu-item>
-            
+              <!-- element规定这里的index指向path -->
+              <el-menu-item index="users">
+                <template slot="title">
+                  <i class="el-icon-tickets"></i>
+                  <span>用户列表</span>
+                </template>
+              </el-menu-item>
+
             </el-submenu>
             <!-- 2 -->
             <el-submenu index="2">
@@ -47,16 +47,16 @@
                 <i class="el-icon-location"></i>
                 <span>权限管理</span>
               </template>
-              
-                <el-menu-item index="1-1"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>角色列表</span>
-                  </template></el-menu-item>
-                <el-menu-item index="1-2"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>权限列表</span>
-                  </template></el-menu-item>
-             
+
+              <el-menu-item index="1-1"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>角色列表</span>
+                </template></el-menu-item>
+              <el-menu-item index="1-2"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>权限列表</span>
+                </template></el-menu-item>
+
             </el-submenu>
             <!-- 3 -->
             <el-submenu index="3">
@@ -64,20 +64,20 @@
                 <i class="el-icon-location"></i>
                 <span>商品管理</span>
               </template>
-             
-                <el-menu-item index="1-1"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>商品列表</span>
-                  </template></el-menu-item>
-                <el-menu-item index="1-2"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>分类参数</span>
-                  </template></el-menu-item>
-                <el-menu-item index="1-2"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>商品分类</span>
-                  </template></el-menu-item>
-              
+
+              <el-menu-item index="1-1"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>商品列表</span>
+                </template></el-menu-item>
+              <el-menu-item index="1-2"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>分类参数</span>
+                </template></el-menu-item>
+              <el-menu-item index="1-2"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>商品分类</span>
+                </template></el-menu-item>
+
             </el-submenu>
             <!-- 4 -->
             <el-submenu index="4">
@@ -85,13 +85,13 @@
                 <i class="el-icon-location"></i>
                 <span>订单管理</span>
               </template>
-             
-                <el-menu-item index="1-1">
-                  <template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>订单列表</span>
-                  </template>
-                </el-menu-item>
+
+              <el-menu-item index="1-1">
+                <template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>订单列表</span>
+                </template>
+              </el-menu-item>
 
             </el-submenu>
             <!-- 5 -->
@@ -100,27 +100,27 @@
                 <i class="el-icon-location"></i>
                 <span>数据统计</span>
               </template>
-             
-                <el-menu-item index="1-1"><template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>数据报表</span>
-                  </template></el-menu-item>
-             
+
+              <el-menu-item index="1-1"><template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>数据报表</span>
+                </template></el-menu-item>
+
             </el-submenu>
           </el-menu>
         </div>
       </el-aside>
       <!-- 主体部分 -->
       <el-main class="main">
-<router-view></router-view>
+        <router-view></router-view>
       </el-main>
-     
+
     </el-container>
   </el-container>
 </template>
 <script>
   export default {
-    //钩子函数,在组件实例被创建之前
+    // 钩子函数,在组件实例被创建之前
     beforeCreate() {
       // 获取token
       const token = localStorage.getItem('token')
@@ -142,7 +142,7 @@
         localStorage.clear()
         // 调回登录页
         this.$router.push({
-          name: "login"
+          name: 'login'
         })
       }
     }

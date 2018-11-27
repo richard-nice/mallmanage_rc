@@ -8,14 +8,15 @@
         <el-breadcrumb-item>用户列表</el-breadcrumb-item>
       </el-breadcrumb>
       <!-- 搜索框 -->
-      <div style="margin: 20px 0;">
-        <el-input placeholder="请输入内容" class="searchUser">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+      <div style="margin: 20px 0">
+        <el-input placeholder="请输入内容" class="searchUser" v-model="query" clearable>
+          <el-button @click="searchUsers()" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <!--  添加用户 按钮 -->
-        <el-button type="success" plain>添加用户</el-button>
+        <el-button class="sureUserAdd" @click="addDialogFormVisible = true" type="success" plain>添加用户</el-button>
       </div>
-      <el-table stripe style="width: 100%">
+      <!-- 表格主体 -->
+      <el-table :data='userList' stripe style="width: 100%">
         <el-table-column prop="id" label="#" width="50">
         </el-table-column>
         <el-table-column prop="username" label="姓名" width="110">
@@ -25,33 +26,234 @@
         <el-table-column prop="mobile" label="电话" width="180">
         </el-table-column>
         <el-table-column prop="create_time" label="创建日期" width="180">
+          <template slot-scope="scope">
+            {{scope.row.create_time | fmtdate}}
+          </template>
         </el-table-column>
-        <el-table-column prop="mg_state" label="用户状态" width="180">
+
+        <el-table-column label="用户状态" width="180">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+            </el-switch>
+          </template>
         </el-table-column>
+
         <el-table-column label="操作" width="180">
+          <template slot-scope="scope">
+
+            <el-button @click="editUser(scope.row.id)" type="primary" size="mini" icon="el-icon-edit" circle plain></el-button>
+            <el-button @click="deleteUser(scope.row.id)" type="danger" size="mini" icon="el-icon-delete" circle plain></el-button>
+            <el-button type="success" size="mini" icon="el-icon-check" circle plain></el-button>
+
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1"
-        :page-sizes="[2, 4, 6, 8]" :page-size="2" layout="total, sizes, prev, pager, next, jumper" :total="400">
-      </el-pagination>
+      <div style="margin-top:20px">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1"
+          :page-sizes="[2, 4, 6, 8]" :page-size="2" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
+      </div>
+      <!-- "添加用户"对话框 -->
+      <el-dialog title="添加用户" :visible.sync="addDialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="用户名" :label-width="formLabelWidth">
+            <el-input v-model="form.username" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" :label-width="formLabelWidth">
+            <el-input v-model="form.password" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" :label-width="formLabelWidth">
+            <el-input v-model="form.email" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="电话" :label-width="formLabelWidth">
+            <el-input v-model="form.mobile" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="addDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="sureUserAdd()">确 定</el-button>
+        </div>
+      </el-dialog>
+      <!-- "编辑用户"对话框 -->
+      <el-dialog title="编辑用户" :visible.sync="editDialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="用户名" :label-width="formLabelWidth">
+            <el-input v-model="form.username" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" :label-width="formLabelWidth">
+            <el-input v-model="form.email" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="电话" :label-width="formLabelWidth">
+            <el-input v-model="form.mobile" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="editDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="sureUserEdit()">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 <script>
   export default {
     data() {
-      return {}
-    },
-    // create(
+      return {
+        //查询参数
+        query: '',
+        pagenum: 1,
+        pagesize: 2,
+        total: 0,
+        userList: [{
+          username: '',
+          email: '',
+          mobile: '',
+          create_time: ''
+        }],
+        isShowClear: false,
+        form: {
+          username: '',
+          password: '',
+          email: '',
+          mobile: ''
+        },
+        addDialogFormVisible: false,
+        editDialogFormVisible: false,
+        formLabelWidth: '100px',
 
-    // )
+      }
+    },
+
+    created() {
+      this.getUsers()
+    },
     methods: {
-      handleSizeChange() {
+      // 编辑用户
+      editUser() {
+        this.editDialogFormVisible = true
+      },
+      // 确认用户编辑完成
+      async sureUserEdit(edituserID) {
+        this.editDialogFormVisible = false
+        const res = await this.$http.put(`users/${edituserID}`)
+
+        const {
+          meta: {
+            msg,
+            status
+          },
+          data
+        } = res.data
+        console.log(res)
+        if (status === 200) {
+          this.$message.success(msg)
+        }
+
 
       },
-      handleCurrentChange() {
+      // 搜索按钮
+      searchUsers() {
+        // 根据query发送请求
+        // 重置页码
+        this.pagenum = 1
+        this.getUsers()
+      },
+      // 分页相关方法
+      handleSizeChange(val) { /* val哪来的 */
+        console.log(`每页${val}条数据`);
+        this.pagesize = val
+        // 重置页码
+        this.pagenum = 1
+        this.getUsers()
+      },
+      handleCurrentChange(val) {
+        console.log(`当前是第${val}页`);
+        this.pagenum = val
+        this.getUsers()
+      },
+      // 确认添加用户
+      async sureUserAdd() {
+        // 关闭窗口
+        this.addDialogFormVisible = false
+        // 发送异步请求
+        var res = await this.$http.post('users', this.form)
+        const {
+          meta: {
+            status,
+            msg
+          },
+          data
+        } = res.data
+        if (status === 201) {
+          console.log(res)
+          this.$message.success(msg)
+          // 更新视图
+          this.getUsers()
+          // 清空对话框
+          this.form = {}
+        } else {
+          this.$message.warning(msg)
+        }
+      },
+      // 1111111111111111111111111111111111111111111111111111
+      deleteUser(userID) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          // 发送删除请求
+          const res = await this.$http.delete(`users/${userID}`)
+          const {
+            meta: {
+              msg,
+              status
+            },
+            data
+          } = res.data
+          console.log(res)
+          if (status === 200) {
+            this.$message({
+              type: 'success',
+              message: msg
+            })
+            this.getUsers()
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: msg
+          })
+        })
 
+      },
+      // 获取用户列表
+      async getUsers() {
+        // 接口文档要求授权API->设置请求头
+        const AUTH_TOKEN = localStorage.getItem('token')
+        this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+        const res = await this.$http.get(
+          `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+        // console.log(res);
+        const {
+          meta: {
+            msg,
+            status
+          },
+          data: {
+            total,
+            users
+          }
+        } = res.data
+
+        if (status === 200) {
+          this.total = total
+          this.userList = users
+          this.$message.success(msg);
+        } else {
+          this.$message.warning(msg);
+        }
       }
     }
   }
@@ -64,6 +266,12 @@
 
   .searchUser {
     width: 300px;
+  }
+
+  .username {}
+
+  el-card {
+    height: 100%;
   }
 
 </style>
