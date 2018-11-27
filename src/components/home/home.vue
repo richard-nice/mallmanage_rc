@@ -25,22 +25,21 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <div>
-
-
-          <el-menu :router="true" :unique-opened='true' class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+          <el-menu :router="true" :unique-opened='true' class="el-menu-vertical-demo" >
             <!-- 1 -->
             <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-document"></i>
                 <span>用户管理</span>
               </template>
-              <el-menu-item-group>
-                <el-menu-item index="1-1"><template slot="title">
+              
+                <el-menu-item index="users">
+                  <template slot="title">
                     <i class="el-icon-tickets"></i>
                     <span>用户列表</span>
-                  </template></el-menu-item>
-
-              </el-menu-item-group>
+                  </template>
+                </el-menu-item>
+            
             </el-submenu>
             <!-- 2 -->
             <el-submenu index="2">
@@ -48,7 +47,7 @@
                 <i class="el-icon-location"></i>
                 <span>权限管理</span>
               </template>
-              <el-menu-item-group>
+              
                 <el-menu-item index="1-1"><template slot="title">
                     <i class="el-icon-location"></i>
                     <span>角色列表</span>
@@ -57,7 +56,7 @@
                     <i class="el-icon-location"></i>
                     <span>权限列表</span>
                   </template></el-menu-item>
-              </el-menu-item-group>
+             
             </el-submenu>
             <!-- 3 -->
             <el-submenu index="3">
@@ -65,7 +64,7 @@
                 <i class="el-icon-location"></i>
                 <span>商品管理</span>
               </template>
-              <el-menu-item-group>
+             
                 <el-menu-item index="1-1"><template slot="title">
                     <i class="el-icon-location"></i>
                     <span>商品列表</span>
@@ -78,7 +77,7 @@
                     <i class="el-icon-location"></i>
                     <span>商品分类</span>
                   </template></el-menu-item>
-              </el-menu-item-group>
+              
             </el-submenu>
             <!-- 4 -->
             <el-submenu index="4">
@@ -86,7 +85,7 @@
                 <i class="el-icon-location"></i>
                 <span>订单管理</span>
               </template>
-              <el-menu-item-group>
+             
                 <el-menu-item index="1-1">
                   <template slot="title">
                     <i class="el-icon-location"></i>
@@ -94,7 +93,6 @@
                   </template>
                 </el-menu-item>
 
-              </el-menu-item-group>
             </el-submenu>
             <!-- 5 -->
             <el-submenu index="5">
@@ -102,23 +100,23 @@
                 <i class="el-icon-location"></i>
                 <span>数据统计</span>
               </template>
-              <el-menu-item-group>
+             
                 <el-menu-item index="1-1"><template slot="title">
                     <i class="el-icon-location"></i>
                     <span>数据报表</span>
                   </template></el-menu-item>
-              </el-menu-item-group>
+             
             </el-submenu>
           </el-menu>
-
         </div>
       </el-aside>
       <!-- 主体部分 -->
-      <el-main>Main</el-main>
+      <el-main class="main">
+<router-view></router-view>
+      </el-main>
+     
     </el-container>
   </el-container>
-
-
 </template>
 <script>
   export default {

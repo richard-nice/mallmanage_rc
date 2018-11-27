@@ -14,64 +14,64 @@
   </div>
 </template>
 <script>
-  export default {
-    data() {
-      return {
-        formdata: {
-          username: '',
-          password: ''
-        },
+export default {
+  data () {
+    return {
+      formdata: {
+        username: '',
+        password: ''
       }
-    },
-    methods: {
-      async handleLogin() {
-        const res = await this.$http.post('login', this.formdata)
-        console.log(res)
-        // 声明两个变量
-        const {
-          meta: {
-            msg,
-            status
-          },
-          data
-        } = res.data
-        if (status === 200) {
-          const token = localStorage.setItem('token', data.token)
-          this.$message.success(msg)
-          this.$router.push({
-            name: 'home'
-          })
-        } else {
-          this.$message.warning(msg)
-        }
-      }
-      // handleLogin() {
-      // this.$http.post('login', this.formdata).then(res => {
-      //   console.log(res)
-      //   const {
-      //     meta: {
-      //       msg,
-      //       status
-      //     },
-      //     data
-      //   } = res.data
-      //   if (status === 200) {
-      //     // 跳转到首页,编程式导航
-      //     this.$router.push({
-      //       name: "home"
-      //     })
-      //     // 提示登录成功(引入提示框)
-      //     this.$message.success(msg)
-      //   } else {
-      //     // 如果失败提示用户
-      //     this.$message.warning(msg)
-      //   }
-      // })
-      // }
-
     }
+  },
+  methods: {
+    async handleLogin () {
+      const res = await this.$http.post('login', this.formdata)
+      console.log(res)
+      // 声明两个变量
+      const {
+        meta: {
+          msg,
+          status
+        },
+        data
+      } = res.data
+      if (status === 200) {
+        const token = localStorage.setItem('token', data.token)
+        this.$message.success(msg)
+        this.$router.push({
+          name: 'home'
+        })
+      } else {
+        this.$message.warning(msg)
+      }
+    }
+    // handleLogin() {
+    // this.$http.post('login', this.formdata).then(res => {
+    //   console.log(res)
+    //   const {
+    //     meta: {
+    //       msg,
+    //       status
+    //     },
+    //     data
+    //   } = res.data
+    //   if (status === 200) {
+    //     // 跳转到首页,编程式导航
+    //     this.$router.push({
+    //       name: "home"
+    //     })
+    //     // 提示登录成功(引入提示框)
+    //     this.$message.success(msg)
+    //   } else {
+    //     // 如果失败提示用户
+    //     this.$message.warning(msg)
+    //   }
+    // })
+    // }
 
   }
+
+}
 
 </script>
 <style>

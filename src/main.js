@@ -13,6 +13,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(MyHttpServer)
 
+// 全局过滤器  -处理日期格式
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
