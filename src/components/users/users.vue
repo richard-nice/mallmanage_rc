@@ -121,30 +121,30 @@
   export default {
     data() {
       return {
-        //查询参数
-        query: "",
+        // 查询参数
+        query: '',
         pagenum: 1,
         pagesize: 2,
         total: 0,
         userList: [{
-          username: "",
-          email: "",
-          mobile: "",
-          create_time: ""
+          username: '',
+          email: '',
+          mobile: '',
+          create_time: ''
         }],
         isShowClear: false,
         form: {
-          username: "",
-          password: "",
-          email: "",
-          mobile: ""
+          username: '',
+          password: '',
+          email: '',
+          mobile: ''
         },
         addDialogFormVisible: false,
         editDialogFormVisible: false,
         roleDialogFormVisible: false,
-        formLabelWidth: "100px",
+        formLabelWidth: '100px',
         // 分配角色
-        currUsername: "",
+        currUsername: '',
         currRoleId: -1,
         roles: [],
         currUserId: ''
@@ -162,7 +162,7 @@
 
         this.currUsername = user.username
         this.currUserId = user.id
-        // 发送请求 获取全部的roles 
+        // 发送请求 获取全部的roles
         var res1 = await this.$http.get('roles')
         // console.log(res1)
         // data:
@@ -207,7 +207,7 @@
       },
       // 确认用户编辑完成
       async sureUserEdit() {
-        this.editDialogFormVisible = false;
+        this.editDialogFormVisible = false
         const res = await this.$http.put(`users/${this.form.id}`, this.form)
         console.log(this.form)
         const {
@@ -218,6 +218,7 @@
           data
         } = res.data
         console.log(res)
+        console.log(data)
         if (status === 200) {
           this.$message.success(msg)
         }
@@ -246,8 +247,6 @@
         console.log(`当前是第${val}页`)
         this.pagenum = val
         this.getUsers()
-
-
       },
       // 添加用户
       addUser() {
@@ -259,14 +258,14 @@
         // 关闭窗口
         this.addDialogFormVisible = false
         // 发送异步请求
-        var res = await this.$http.post("users", this.form)
+        var res = await this.$http.post('users', this.form)
         const {
           meta: {
             status,
             msg
           },
           data
-        } = res.data;
+        } = res.data
         if (status === 201) {
           console.log(res)
           this.$message.success(msg)
@@ -280,10 +279,10 @@
       },
       // 1111111111111111111111111111111111111111111111111111
       deleteUser(userID) {
-        this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           })
           .then(async () => {
             // 发送删除请求
@@ -298,7 +297,7 @@
 
             if (status === 200) {
               this.$message({
-                type: "success",
+                type: 'success',
                 message: msg
               })
               this.pagenum = 1
@@ -307,7 +306,7 @@
           })
           .catch(() => {
             this.$message({
-              type: "info",
+              type: 'info',
               message: msg
             })
           })
@@ -315,13 +314,13 @@
       // 获取用户列表
       async getUsers() {
         // 接口文档要求授权API->设置请求头
-        const AUTH_TOKEN = localStorage.getItem("token")
-        this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN
+        const AUTH_TOKEN = localStorage.getItem('token')
+        this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
         const res = await this.$http.get(
           `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${
-            this.pagesize
-          }`
-        );
+          this.pagesize
+        }`
+        )
         // console.log(res);
         const {
           meta: {
@@ -343,7 +342,7 @@
         }
       }
     }
-  };
+  }
 
 </script>
 <style>

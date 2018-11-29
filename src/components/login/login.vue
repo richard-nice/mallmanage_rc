@@ -1,6 +1,5 @@
 <template>
   <div class="login-wrap">
-
     <el-form class="login-form" label-position="top" label-width="80px" :model="formdata">
       <h2>用户登录</h2>
       <el-form-item label="用户名">
@@ -36,7 +35,7 @@ export default {
         data
       } = res.data
       if (status === 200) {
-        const token = localStorage.setItem('token', data.token)
+        localStorage.setItem('token', data.token)
         this.$message.success(msg)
         this.$router.push({
           name: 'home'
@@ -68,9 +67,7 @@ export default {
     //   }
     // })
     // }
-
   }
-
 }
 
 </script>
