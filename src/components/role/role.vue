@@ -12,14 +12,16 @@
             <el-row v-for="(item1, index) in scope.row.children" :key="index">
               <el-col :span="6">
                 <el-tag closable>{{item1.authName}}</el-tag>
+                <span>></span>
               </el-col>
               <el-col :span="18">
                 <el-row v-for="(item2, index) in item1.children" :key="index">
-                  <el-col>
+                  <el-col :span="6">
                     <el-tag closable type='success'>{{item2.authName}}</el-tag>
+                    <span>></span>
                   </el-col>
-                  <el-col v-for="(item3, index) in item2.children" :key="index">
-                    <el-tag type='info' closable>{{item3.authName}}</el-tag>
+                  <el-col :span="5" v-for="(item3, index) in item2.children" :key="index">
+                    <el-tag type='warning' closable>{{item3.authName}}</el-tag>
                   </el-col>
                 </el-row>
               </el-col>
