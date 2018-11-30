@@ -14,23 +14,23 @@ MyHttpServer.install = (Vue) => {
       // config对象有headers参数和url标识参数  给headers增加一个值
       const AUTH_TOKEN = localStorage.getItem('token')
       config.headers.common['Authorization'] = AUTH_TOKEN
-      console.log(config)
-      console.log(config.url)
-      return config
+      // console.log(config)
+      // console.log(config.url)
     }
+    return config
   }, function (error) {
     // 对请求错误做些什么
     return Promise.reject(error)
   })
 
-  // 添加响应拦截器
-  axios.interceptors.response.use(function (response) {
-    // 对响应数据做点什么
-    return response
-  }, function (error) {
-    // 对响应错误做点什么
-    return Promise.reject(error)
-  })
+  // // 添加响应拦截器
+  // axios.interceptors.response.use(function (response) {
+  //   // 对响应数据做点什么
+  //   return response
+  // }, function (error) {
+  //   // 对响应错误做点什么
+  //   return Promise.reject(error)
+  // })
   // 添加实例方法
   Vue.prototype.$http = axios
 }

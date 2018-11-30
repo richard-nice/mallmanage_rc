@@ -9,19 +9,26 @@
         <!-- 展开列 -->
         <el-table-column type="expand" width="100">
           <template slot-scope="scope">
+            <!-- scope.row代表当前行的数据 -->
+            <el-row v-if="scope.row.children.length===0"><span>未分配权限</span></el-row>
             <el-row v-for="(item1, index) in scope.row.children" :key="index">
               <el-col :span="6">
-                <el-tag closable>{{item1.authName}}</el-tag>
-                <span>></span>
+                <el-tag closable @close="closeTag(scope.row,item1.id)">{{ item1.authName }}</el-tag>
+                <i class="
+                  el-icon-arrow-right"></i>
               </el-col>
               <el-col :span="18">
                 <el-row v-for="(item2, index) in item1.children" :key="index">
-                  <el-col :span="6">
-                    <el-tag closable type='success'>{{item2.authName}}</el-tag>
-                    <span>></span>
+                  <el-col :span="4">
+                    <el-tag closable type="success" @close="closeTag(scope.row,item2.id)">
+                      {{item2.authName }}
+                    </el-tag>
+                    <i class="el-icon-arrow-right"></i>
                   </el-col>
-                  <el-col :span="5" v-for="(item3, index) in item2.children" :key="index">
-                    <el-tag type='warning' closable>{{item3.authName}}</el-tag>
+                  <el-col :span="20">
+                    <el-tag v-for="(item3, index) in item2.children" :key="index" type="warning" closable @close="closeTag(scope.row,item3.id)">{{
+                      item3.authName
+                      }}</el-tag>
                   </el-col>
                 </el-row>
               </el-col>
@@ -31,8 +38,8 @@
         <el-table-column type="index" label="#" width="100"> </el-table-column>
         <el-table-column prop="roleName" label="角色名称" width="220">
         </el-table-column>
-        <el-table-column prop="roleDesc" label="角色描述" width="220"> </el-table-column>
-
+        <el-table-column prop="roleDesc" label="角色描述" width="220">
+        </el-table-column>
 
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -40,8 +47,9 @@
             <el-button @click="editRole(scope.row)" type="primary" size="mini" icon="el-icon-edit" circle plain></el-button>
             <!-- 删除按钮 -->
             <el-button @click="deleteRole(scope.row.id)" type="danger" size="mini" icon="el-icon-delete" circle plain></el-button>
-            <!-- 分配角色按钮 -->
-            <el-button @click="roleChange(scope.row)" type="success" size="mini" icon="el-icon-check" circle plain></el-button>
+            <!-- check按钮 -->
+            <el-button @click="showTreeRightsbox(scope.row)" type="success" size="mini" icon="el-icon-check" circle
+              plain></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,26 +90,30 @@
           <el-button type="primary" @click="sureUserEdit()">确 定</el-button>
         </div>
       </el-dialog>
-      <!-- "分配角色"对话框 -->
-      <el-dialog title="分配角色" :visible.sync="roleDialogFormVisible">
-        <el-form :model="form">
-          <el-form-item label="用户名" label-width="100px">
-            {{ currRolename }}
-          </el-form-item>
-          <el-form-item label="角色" label-width="100px">
-            <!-- select绑定的值和option中的value相同时显示相应文本 -->
-            <el-select v-model="currRoleId">
-              <!-- 遍历roles数组 -->
-              <el-option :value="-1" label="请选择角色" disabled="true"></el-option>
-              <el-option v-for="(item,index) in roles" :key="index" :label="item.roleName" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
+      <!-- "check"对话框 -->
+      <!--
+          树形结构
+          data->绑定的数据数组
+        show-checkbox -> 选择方块
+        node-key->每个节点的唯一标识
+        default-expanded-keys->[要展开的节点的id值]
+        default-checked-keys->[选中的节点id值]
+        props="配置选项{label:绑定数据data中的数据key名,children:绑定数据data中的数据key名}"
+         -->
+      <!--
+              :default-expanded-keys="[2, 3]"
+        :default-checked-keys="[5]"
+         -->
+      <el-dialog title="收货地址" :visible.sync="TreeRightsDialogFormVisible">
+        <el-tree :data="data2" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]"
+          :props="defaultProps">
+        </el-tree>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="roleDialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="sureChangeRole()">确 定</el-button>
+          <el-button @click="TreeRightsDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="TreeRightsDialogFormVisible = false">确 定</el-button>
         </div>
       </el-dialog>
+
     </el-card>
   </div>
 </template>
@@ -110,58 +122,99 @@
     data() {
       return {
         roleList: [],
-        formLabelWidth: '500px',
+        formLabelWidth: "500px",
         form: {},
         roles: [],
         currRoleId: -1,
-        currRolename: '',
+        currRolename: "",
         addDialogFormVisible: false,
         editDialogFormVisible: false,
-        roleDialogFormVisible: false
+        roleDialogFormVisible: false,
+        TreeRightsDialogFormVisible: false,
+        data2: [{
+          id: 1,
+          label: '一级 1',
+          children: [{
+            id: 4,
+            label: '二级 1-1',
+            children: [{
+              id: 9,
+              label: '三级 1-1-1'
+            }]
+          }]
+        }, {
+          id: 2,
+          label: '一级 2',
+          children: [{
+            id: 5,
+            label: '二级 2-1'
+          }]
+        }, {
+          id: 3,
+          label: '一级 3',
+          children: [{
+            id: 7,
+            label: '二级 3-1'
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        }
       }
     },
     created() {
-      this.getRoleList()
+      this.getRoleList();
     },
     methods: {
+      // 显示树形权限对话框 
+      showTreeRightsbox() {
+        this.TreeRightsDialogFormVisible = true
+      }, // 关闭标签tag时 共用一个方法   因为标签内传过来的实参不同  可以实现不同层级标签的删除
+      async closeTag(role, rightID) {
+        const res = await this.$http.delete(`roles/${role.id}/rights/${rightID}`)
+        console.log(res);
+        console.log(rightID);
+        // 更新局部 把更改后的数据 赋值给 视图数据    res.data.data就是当前角色的剩余保留着的权限
+        role.children = res.data.data
+      },
       // 不用设置headers了获取token了
       async getRoleList() {
-        var res = await this.$http.get('roles')
-        console.log(res)
-        this.roleList = res.data.data
-        console.log(this.roleList)
+        var res = await this.$http.get("roles");
+        console.log(res);
+        this.roleList = res.data.data;
+        console.log(this.roleList);
       },
       editRole(val) {
-        this.editDialogFormVisible = true
+        this.editDialogFormVisible = true;
       },
       deleteRole(val) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+        this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
           })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
+          .then(() => {
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
           })
-        })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       },
       roleChange(val) {
-        this.roleDialogFormVisible = true
+        this.roleDialogFormVisible = true;
       },
       addRole() {
-        this.addDialogFormVisible = true
+        this.addDialogFormVisible = true;
       }
-
-
     }
-  }
+  };
 
 </script>
-<style>
-</style>
+<style></style>
