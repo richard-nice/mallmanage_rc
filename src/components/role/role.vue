@@ -174,6 +174,7 @@
       // 显示树形权限对话框 
       showTreeRightsbox() {
         this.TreeRightsDialogFormVisible = true
+
       }, // 关闭标签tag时 共用一个方法   因为标签内传过来的实参不同  可以实现不同层级标签的删除
       async closeTag(role, rightID) {
         const res = await this.$http.delete(`roles/${role.id}/rights/${rightID}`)
