@@ -104,9 +104,8 @@
               :default-expanded-keys="[2, 3]"
         :default-checked-keys="[5]"
          -->
-      <el-dialog title="收货地址" :visible.sync="TreeRightsDialogFormVisible">
-        <el-tree :data="data2" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]"
-          :props="defaultProps">
+      <el-dialog title="分配权限" :visible.sync="TreeRightsDialogFormVisible">
+        <el-tree ref="tree" default-expand-all :data="treeRightsList" show-checkbox node-key="id" :props="defaultProps">
         </el-tree>
         <div slot="footer" class="dialog-footer">
           <el-button @click="TreeRightsDialogFormVisible = false">取 消</el-button>
@@ -131,36 +130,12 @@
         editDialogFormVisible: false,
         roleDialogFormVisible: false,
         TreeRightsDialogFormVisible: false,
-        data2: [{
-          id: 1,
-          label: '一级 1',
-          children: [{
-            id: 4,
-            label: '二级 1-1',
-            children: [{
-              id: 9,
-              label: '三级 1-1-1'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '一级 2',
-          children: [{
-            id: 5,
-            label: '二级 2-1'
-          }]
-        }, {
-          id: 3,
-          label: '一级 3',
-          children: [{
-            id: 7,
-            label: '二级 3-1'
-          }]
-        }],
+        treeRightsList: [],
+        // chiledren和authName从treeRightsList中拿数据
         defaultProps: {
           children: 'children',
-          label: 'label'
-        }
+          label: 'authName'
+        },
       }
     },
     created() {
@@ -168,8 +143,16 @@
     },
     methods: {
       // 显示树形权限对话框 
-      showTreeRightsbox() {
+      async showTreeRightsbox() {
         this.TreeRightsDialogFormVisible = true
+        const res = await this.$http.get('rights/tree')
+        console.log(res.data.data)
+        this.treeRightsList = res.data.data
+        // 返回目前半选中的节点的 key 所组成的数组
+        // var arr1 = getHalfCheckedKeys()
+        // 返回目前被选中的节点的 key 所组成的数组
+        // var arr2 = getCheckedKeys()
+
       }, // 关闭标签tag时 共用一个方法   因为标签内传过来的实参不同  可以实现不同层级标签的删除
       async closeTag(role, rightID) {
         const res = await this.$http.delete(`roles/${role.id}/rights/${rightID}`)
