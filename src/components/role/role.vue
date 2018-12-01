@@ -1,8 +1,5 @@
 <template>
   <div>
-<<<<<<< HEAD
-    <my-brand lever1='权限管理' level2='角色列表'></my-brand>
-=======
     <el-card class="box-card">
       <my-brand level1="权限管理" level2="角色列表" style="margin-bottom:20px"></my-brand>
       <el-button type="success" @cick="addRole()" plain>添加角色</el-button>
@@ -105,19 +102,19 @@
          -->
       <!--
               :default-expanded-keys="[2, 3]"
-        :default-checked-keys="[5]"
+        :default-checked-keys="[5,6]"  选中的节点的key组成的数组的集合
          -->
       <el-dialog title="分配权限" :visible.sync="TreeRightsDialogFormVisible">
-        <el-tree ref="tree" default-expand-all :data="treeRightsList" show-checkbox node-key="id" :props="defaultProps">
+        <el-tree ref="tree" default-expand-all :default-checked-keys="arrCheck" :data="treeRightsList" show-checkbox
+          node-key="id" :props="defaultProps">
         </el-tree>
         <div slot="footer" class="dialog-footer">
           <el-button @click="TreeRightsDialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="TreeRightsDialogFormVisible = false">确 定</el-button>
+          <el-button type="primary" @click="sureRights()">确 定</el-button>
         </div>
       </el-dialog>
 
     </el-card>
->>>>>>> dev-rights
   </div>
 </template>
 <script>
@@ -135,6 +132,8 @@
         roleDialogFormVisible: false,
         TreeRightsDialogFormVisible: false,
         treeRightsList: [],
+        arrCheck: [],
+
         // chiledren和authName从treeRightsList中拿数据
         defaultProps: {
           children: 'children',
@@ -146,34 +145,62 @@
       this.getRoleList();
     },
     methods: {
-      // 显示树形权限对话框 
-      async showTreeRightsbox() {
-        this.TreeRightsDialogFormVisible = true
-<<<<<<< HEAD
-=======
-        const res = await this.$http.get('rights/tree')
-        console.log(res.data.data)
-        this.treeRightsList = res.data.data
+      // 确认分配/修改角色的权限
+      async sureRights() {
         // 返回目前半选中的节点的 key 所组成的数组
-        // var arr1 = getHalfCheckedKeys()
+        var arr1 = this.$refs.tree.getHalfCheckedKeys()
         // 返回目前被选中的节点的 key 所组成的数组
-        // var arr2 = getCheckedKeys()
->>>>>>> dev-rights
+        var arr2 = this.$refs.tree.getCheckedKeys()
+        var arrAllChecked = [...arr1, ...arr2] //ES6->展开操作运算符  ...  展开取出当前数组的意思
+        // var arr = arr1.concat(arr2)  ES5数组合并数组的语法
+        var arr = arrAllChecked.join(',')
+        // console.log(arrAllChecked)
+        // console.log(arr)
+
+        var res = await this.$http.post(`roles/${this.currRoleId}/rights`, {
+          rids: arr
+        })
+        // console.log(res)
+        this.TreeRightsDialogFormVisible = false
+        this.getRoleList()
+      },
+      // 显示树形权限对话框 
+      async showTreeRightsbox(role) {
+        this.currRoleId = role.id
+        this.TreeRightsDialogFormVisible = true
+        const res = await this.$http.get('rights/tree')
+        // console.log(res.data.data)
+        console.log(res)
+        this.treeRightsList = res.data.data
+        // 显示当前角色所有被勾选的权限
+        // console.log(role) // 查看角色列表中的值 含有权限数据 可用
+        var arrTmp = []
+        role.children.forEach(item1 => {
+          // arrTmp.push(item1.id)
+          item1.children.forEach(item2 => {
+            // arrTmp.push(item2.id)
+            item2.children.forEach(item3 => {
+              arrTmp.push(item3.id)
+            })
+          })
+        })
+        this.arrCheck = arrTmp
+        this.getRoleList()
 
       }, // 关闭标签tag时 共用一个方法   因为标签内传过来的实参不同  可以实现不同层级标签的删除
       async closeTag(role, rightID) {
         const res = await this.$http.delete(`roles/${role.id}/rights/${rightID}`)
-        console.log(res);
-        console.log(rightID);
+        // console.log(res);
+        // console.log(rightID);
         // 更新局部 把更改后的数据 赋值给 视图数据    res.data.data就是当前角色的剩余保留着的权限
         role.children = res.data.data
       },
       // 不用设置headers了获取token了
       async getRoleList() {
         var res = await this.$http.get("roles");
-        console.log(res);
+        // console.log(res);
         this.roleList = res.data.data;
-        console.log(this.roleList);
+        // console.log(this.roleList);
       },
       editRole(val) {
         this.editDialogFormVisible = true;
