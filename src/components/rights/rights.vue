@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card">
-      <my-brand level1="权限管理" level2="权限列表"></my-brand>
+      <my-bread level1="权限管理" level2="权限列表"></my-bread>
       <el-table :data="rightslist" height="450" border style="width: 100%;margin-top:30px">
         <el-table-column prop="id" label="#" type='index' width="80">
           <!-- type="index"?????? -->

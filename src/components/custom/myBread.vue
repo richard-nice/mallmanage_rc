@@ -10,7 +10,7 @@
     data() {
       return {}
     },
-    name: 'my-brand',
+    name: 'my-bread',
     props: ['level1', 'level2']
   }
 

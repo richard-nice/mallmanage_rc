@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card">
-      <my-brand level1="权限管理" level2="角色列表" style="margin-bottom:20px"></my-brand>
+      <my-bread level1="权限管理" level2="角色列表" style="margin-bottom:20px"></my-bread>
       <el-button type="success" @cick="addRole()" plain>添加角色</el-button>
 
       <!-- 用户列表  表格主体 -->
@@ -229,6 +229,7 @@
       },
       addRole() {
         this.addDialogFormVisible = true;
+        console.log(11111);
       }
     }
   };

@@ -25,87 +25,19 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <div>
-          <el-menu :router="true" :unique-opened='true' class="el-menu-vertical-demo">
-            <!-- 1 -->
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-document"></i>
-                <span>用户管理</span>
-              </template>
-              <!-- element规定这里的index指向path -->
-              <el-menu-item index="users">
-                <template slot="title">
-                  <i class="el-icon-tickets"></i>
-                  <span>用户列表</span>
-                </template>
-              </el-menu-item>
-
-            </el-submenu>
-            <!-- 2 -->
-            <el-submenu index="2">
+          <el-menu :data="sliderList" :router="true" :unique-opened="true" class="el-menu-vertical-demo">
+            <el-submenu :index="''+item1.order" v-for="(item1, index) in sliderList" :key="index">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>权限管理</span>
+                <span>{{item1.authName}}</span>
               </template>
 
-              <el-menu-item index="role"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>角色列表</span>
-                </template></el-menu-item>
-              <el-menu-item index="rights"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>权限列表</span>
-                </template></el-menu-item>
-
-            </el-submenu>
-            <!-- 3 -->
-            <el-submenu index="3">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>商品管理</span>
-              </template>
-
-              <el-menu-item index="1-1"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>商品列表</span>
-                </template></el-menu-item>
-              <el-menu-item index="1-2"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>分类参数</span>
-                </template></el-menu-item>
-              <el-menu-item index="1-2"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>商品分类</span>
-                </template></el-menu-item>
-
-            </el-submenu>
-            <!-- 4 -->
-            <el-submenu index="4">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>订单管理</span>
-              </template>
-
-              <el-menu-item index="1-1">
+              <el-menu-item :index="item2.path" v-for="(item2, i) in item1.children" :key="i">
                 <template slot="title">
                   <i class="el-icon-location"></i>
-                  <span>订单列表</span>
+                  <span>{{item2.authName}}</span>
                 </template>
               </el-menu-item>
-
-            </el-submenu>
-            <!-- 5 -->
-            <el-submenu index="5">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>数据统计</span>
-              </template>
-
-              <el-menu-item index="1-1"><template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>数据报表</span>
-                </template></el-menu-item>
-
             </el-submenu>
           </el-menu>
         </div>
@@ -122,19 +54,30 @@
   export default {
     // 钩子函数,在组件实例被创建之前
     beforeCreate() {
-      // 获取token
-      const token = localStorage.getItem('token')
-      // 在home组件实例创建之前,检测有没有token,如果没有跳转到login
-      if (!token) {
-        this.$router.push({
-          name: 'login'
-        })
-      }
+      // // 获取token
+      // const token = localStorage.getItem('token')
+      // // 在home组件实例创建之前,检测有没有token,如果没有跳转到login
+      // if (!token) {
+      //   this.$router.push({
+      //     name: 'login'
+      //   })
+      // }
     },
     data() {
-      return {}
+      return {
+        sliderList: []
+      }
+    },
+    created() {
+      this.getSlider()
     },
     methods: {
+      // 侧边栏
+      async getSlider() {
+        var res = await this.$http.get('menus')
+        // console.log(res)
+        this.sliderList = res.data.data
+      },
       handleLogout() {
         // 提示退出登录成功
         this.$message.success('退出成功')
